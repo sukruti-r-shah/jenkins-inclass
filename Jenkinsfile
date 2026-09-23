@@ -1,21 +1,39 @@
-post {
-    always {
-        junit 'app/build/test-results/**/*.xml'
+pipeline {
+    agent any
 
-        archiveArtifacts artifacts: 'app/build/libs/*.jar',
-                         fingerprint: true
+    stages {
+        stage('Test') {
+            steps {
+                sh './gradlew check'
+            }
+        }
 
-        echo 'Cleaning up workspace...'
-        deleteDir()
+        stage('Build') {
+            steps {
+                sh './gradlew build'
+            }
+        }
     }
 
-    success {
-        echo 'Pipeline completed successfully!'
-    }
+    post {
+        always {
+            junit 'app/build/test-results/**/*.xml'
 
-    failure {
-        mail to: 'team@example.com',
-             subject: "Failed Pipeline: ${currentBuild.fullDisplayName}",
-             body: "Something is wrong with ${env.BUILD_URL}"
+            archiveArtifacts artifacts: 'app/build/libs/*.jar',
+                             fingerprint: true
+
+            echo 'Cleaning up workspace...'
+            deleteDir()
+        }
+
+        success {
+            echo 'Pipeline completed successfully!'
+        }
+
+        failure {
+            mail to: 'team@example.com',
+                 subject: "Failed Pipeline: ${currentBuild.fullDisplayName}",
+                 body: "Something is wrong with ${env.BUILD_URL}"
+        }
     }
 }
