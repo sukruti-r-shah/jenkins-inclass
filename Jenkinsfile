@@ -21,6 +21,17 @@ pipeline {
 
             archiveArtifacts artifacts: 'app/build/libs/*.jar',
                              fingerprint: true
+
+            echo 'Cleaning up workspace...'
+            deleteDir()
+        }
+
+        success {
+            echo 'Pipeline completed successfully!'
+        }
+
+        failure {
+            echo 'Pipeline failed!'
         }
     }
 }
