@@ -7,11 +7,20 @@ pipeline {
                 sh './gradlew check'
             }
         }
+
+        stage('Build') {
+            steps {
+                sh './gradlew build'
+            }
+        }
     }
 
     post {
         always {
             junit 'app/build/test-results/**/*.xml'
+
+            archiveArtifacts artifacts: 'app/build/libs/*.jar',
+                             fingerprint: true
         }
     }
 }
